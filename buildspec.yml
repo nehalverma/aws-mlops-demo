@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+
+  pre_build:
+    commands:
+      - echo Logging into Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 600298656473.dkr.ecr.us-east-1.amazonaws.com
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building Docker image...
+      - docker build -t mlops-demo .
+      - docker tag mlops-demo:latest 600298656473.dkr.ecr.us-east-1.amazonaws.com/mlops-demo:latest
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing Docker image to ECR...
+      - docker push 600298656473.dkr.ecr.us-east-1.amazonaws.com/mlops-demo:latest
+
+artifacts:
+  files:
+    - '**/*'
